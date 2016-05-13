@@ -50,16 +50,17 @@ suppressWarnings(library(ggplot2))
 The raw data has the number of steps taken at regular intervals of 5 minutes.
 Our first analysis is to estimate the mean total number of steps taken per day.
 With such goal in mind, the first step is to prepare the data by summing the 
-number of steps on each day.
+number of steps on each day and create a histogram on how frequently the sample
+individual takes a certain number of steps in a single day.
 
 
 ```r
 steps_per_day <- aggregate(steps ~ date, raw_data, sum)
 
-ggplot(aes(x=date, y=steps), data = steps_per_day) +
-    geom_bar(stat = 'identity', position = 'dodge') + 
-    geom_hline(yintercept=mean(steps_per_day$steps), color="red") +
-    xlab("Date") + ylab("Number of steps")
+binwidth <- 1000
+ggplot(steps_per_day, aes(steps)) + 
+    geom_histogram(binwidth = binwidth) + 
+    xlab("Steps") + ylab("Frequency")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
@@ -161,28 +162,42 @@ intervals_for_nas         <- as.character(filtered_data$interval[indx])
 filtered_data$steps[indx] <- steps_per_interval_arr[intervals_for_nas]
 ```
 
-Replicating the code from the first analysis, we get the following chart:
+Replicating the code from the first analysis, we compare both histograms and
+see if it any different from the original one. The dark red histogram is the 
+original one while the light red is the addition caused by filling the
+missing values.
 
 
 ```r
-steps_per_day_replaced <- aggregate(steps ~ date, filtered_data, sum)
+steps_per_day_new    <- aggregate(steps ~ date, filtered_data, sum)
+steps_per_day_new$na <- F
 
-ggplot(aes(x=date, y=steps), data = steps_per_day_replaced) +
-    geom_bar(stat = 'identity', position = 'dodge') + 
-    geom_hline(yintercept=mean(steps_per_day_replaced$steps), color="red") +
-    xlab("Date") + ylab("Number of steps")
+steps_per_day_old    <- steps_per_day
+steps_per_day_old$na <- T
+
+steps_per_day_comparison <- rbind(steps_per_day_new, steps_per_day_old)
+
+ggplot(steps_per_day_comparison, aes(steps)) + 
+    geom_histogram(data=steps_per_day_new, fill = "red", alpha = 0.5, binwidth = binwidth) + 
+    geom_histogram(data=steps_per_day_old, fill = "black", alpha = 0.5, binwidth = binwidth) + 
+    xlab("Steps") + ylab("Frequency")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
-It is possible to notice that most empty gaps between two consecutive days have
-been filled with data that is close to the global mean. Gaps aside, the shape
-of the histogram does not change considerably. Changes on the mean and median of
-the number of steps have been minimal as well:
+It is possible to notice that the new distribution is mostly the same with one
+major difference: the frequency around the mean has greatly increased. Under the 
+hypothesis that the the probability of having missing data has no correlation 
+to the intervals, this is the expected behavior, as replacing them with the mean 
+number of steps of the interval should increase the frequency around the mean,
+and less so everywhere else.
+
+In terms of numeric values, changes on the mean and median have been minimal 
+as well:
 
 
 ```r
-mean(steps_per_day_replaced$steps, na.rm = T)
+mean(steps_per_day_new$steps, na.rm = T)
 ```
 
 ```
@@ -190,16 +205,12 @@ mean(steps_per_day_replaced$steps, na.rm = T)
 ```
 
 ```r
-median(steps_per_day_replaced$steps, na.rm = T)
+median(steps_per_day_new$steps, na.rm = T)
 ```
 
 ```
 ## [1] 10766.19
 ```
-
-Under the hypothesis that the the probability of having missing data has no 
-correlation to the intervals, this is the expected behavior, as filling them
-with the mean value of the interval should not add bias to the original data.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
