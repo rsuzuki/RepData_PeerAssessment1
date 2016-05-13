@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
@@ -67,7 +62,7 @@ ggplot(aes(x=date, y=steps), data = steps_per_day) +
     xlab("Date") + ylab("Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 Then we extract the mean and the median of steps taken per day, ignoring the
 missing values in the process.
@@ -103,7 +98,7 @@ ggplot(aes(x=interval, y=steps), data = steps_per_interval) +
     xlab("Interval") + ylab("Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 Then, by using this code:
 
@@ -127,7 +122,7 @@ ggplot(aes(x=interval, y=steps), data = raw_data) +
     stat_summary(aes(y = steps), fun.y=mean, colour="red", geom="line", na.rm = T)
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 ## Imputing missing values
 
@@ -178,12 +173,12 @@ ggplot(aes(x=date, y=steps), data = steps_per_day_replaced) +
     xlab("Date") + ylab("Number of steps")
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 It is possible to notice that most empty gaps between two consecutive days have
 been filled with data that is close to the global mean. Gaps aside, the shape
 of the histogram does not change considerably. Changes on the mean and median of
-the number of steps have been miimal as well:
+the number of steps have been minimal as well:
 
 
 ```r
@@ -203,7 +198,7 @@ median(steps_per_day_replaced$steps, na.rm = T)
 ```
 
 Under the hypothesis that the the probability of having missing data has no 
-correlation to the intervals, this is the expected behaviour, as filling them
+correlation to the intervals, this is the expected behavior, as filling them
 with the mean value of the interval should not add bias to the original data.
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -234,7 +229,7 @@ str(raw_data)
 ```
 
 Now we calculate the mean number of steps based on both *interval* and whether
-the date is a weekend or not and plot a chart to caompare them.
+the date is a weekend or not and plot a chart to compare them.
 
 
 ```r
@@ -244,16 +239,16 @@ ggplot(aes(x=interval, y=steps, color=is.weekend), data = steps_per_interval) +
     xlab("Interval") + ylab("Number of steps") + theme(legend.title=element_blank())
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
+![](PA1_template_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
-There are some obvious changes in behaviour: starting from the earlier 
+There are some obvious changes in behavior: starting from the earlier 
 intervals, it seems that the sample individual wakes up much later on weekends,
 but the amount of steps taken is more evenly distributed while on weekdays, he/she
 walks much more soon after waking up and by the end of the day - probably the 
 result from commuting from/to work or school. Also, it seems that the hour 
 he/she goes to sleep does not differ greatly.
 
-FInally, on average, the said individual seems to walk less on weekdays, which can be
+Finally, on average, the said individual seems to walk less on weekdays, which can be
 a hint about his/her occupation. It is unlikely to be anything that requires a
 lot of physical work or moving around, though further inferences without more 
 information may be speculative at best.
